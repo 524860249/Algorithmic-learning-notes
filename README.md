@@ -11,8 +11,6 @@
 列举了一些经典的算法问题，比如斐波那契数列数列，哥德巴赫猜想的证明等，初步了解算法设计、分析及算法的时间复杂度、空间复杂度.
 如何通过分析处理降低时间复杂度，如何合理的利用空间降低时间复杂度等等......   
 ```   
-[算法初涉实例][algorithm start]   
-[algorithm start]: https://github.com/524860249/Algorithmic-learning-notes/tree/master/01-%E7%AE%97%E6%B3%95%E5%88%9D%E6%B6%89 "算法初涉实例"   
 > 02贪心算法   
 ```
 又称为**贪婪算法**，意思是在对问题求解时，总是选择当下最优的选择，不从整体最优考虑，所做的在某种意义上是局部最优解。
@@ -20,7 +18,5 @@
 我们通过一些经典问题，然后使用贪心算法进行求解，进而全面理解贪心算法......
 
 ```
-[贪心算法实例][greedy algorithm]   
-[greedy algorithm]: https://github.com/524860249/Algorithmic-learning-notes/tree/master/02-%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95 "贪心算法实例"   
 
 
