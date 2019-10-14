@@ -3,7 +3,7 @@ def ein_ladder():
 	n = 1
 	while(not (n % 2 == 1 and n % 3 == 2 and n % 5 == 4 and n % 6 == 5 and n % 7 == 0)):
 		n += 1
-	print(n)
+	return n
 
 ein_ladder()
 
@@ -11,7 +11,7 @@ def ein_ladder1():
 	n = 7
 	while(not(n % 2 == 1 and n % 3 == 2 and n % 5 == 4 and n % 6 == 5 and n % 7 == 0)):
 		n += 7
-	print(n)
+	return n
 
 ein_ladder1()
 
@@ -23,6 +23,6 @@ def ein_ladder2():
 	result = 29
 	while(not(result % 7 == 0)):
 		result += com_mul;
-	print(result)
+	return result
 
 ein_ladder2()
