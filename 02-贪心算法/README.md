@@ -250,12 +250,324 @@
 显然在不可拆分的问题中，全局最优解并非可以通过局部最优解获得（不具有贪心选择性质），但是如果问题中不需要全局最优解，而需要一个**接近全局最优解近似解**，则依然可使用贪心算法。   
 
 
+### 会议安排
+会议室每天都有很多会议要开，而每个会议的时间又不固定，那么如何安排会议可以让一个会议室每天开最多次的会议呢？
+#### 算法设计
+> 1. 为了方便识别各个会议，我们需要给会议一个编号。会议有开始时间和结束时间。那么我们就需要一个可以存储这三个属性的结构体(编号、开始时间、结束时间)   
+> 2. 贪心策略选取   
+   a. 每次从剩余会议中找出开始时间最早且与已经选择的会议时间不冲突的会议，如 已经选择的结束时间为12点，则下一个选择的会议开始时间必须上12点或之后的会议。  
+   b. 每次从剩余会议中找出时间最短的会议且与已经选择的会议时间不冲突的会议，如 已经选择的结束时间为12点，剩余的会议中有 12点至15点，和14点至15点，则选择13至14点的会议    
+   c. 每次从剩余会议中找出结束时间最早且与已经选择的会有时间不冲突的会议，如 以极高选择的结束时间为12点，剩余会议中有12点至15点，和13点至14点，则选择13点至14点    
+   **针对不同的需求，我们选择不同的贪心策略，然后通过选择的贪心策略用程序实现，根据我们的问题需求，显然c需求更合适。**   
+
+|编号|1|2|3|4|5|6|7|8|9|10|
+|  ----  | ----  | ----  |  ----  | ----  | ----  |  ----  | ----  | ----  | ----  | ----  |
+|开始时间|9|10|11|12|13|14|16|15|19|17|20|
+|结束时间|12|11|13|15|16|18|18|21|21|22|
+
+排序后的列表为   
+
+|编号|2|1|3|4|5|6|7|8|9|10|
+|  ----  | ----  | ----  |  ----  | ----  | ----  |  ----  | ----  | ----  | ----  | ----  |
+|开始时间|10|9|11|13|14|16|15|19|17|20|
+|结束时间|11|12|13|15|16|18|18|21|21|22|
+
+按照我们选定的贪心策略   
+第一次选择编号为2，其结束时间为11   
+第二次选择编号为3，其开始时间为11，结束时间为13   
+第三次选择编号为4，其开始时间为13，结束时间为15   
+第四次选择编号为6，其开始时间为16，结束时间为18   
+第五次选择编号为8，其开始时间为19，结束时间为21   
+至此，再无合适会议，选择结束，共可安排5场会议   
+
+#### 程序实现
+
+	#include <iostream>
+	#include <algorithm>
+	#include <cstring>
+
+	using namespace std;
+
+	struct Meet
+	{
+	    int NO;    //会议编号
+	    int start;  //会议开始时间
+	    int end;    //会议结束时间
+	} meet_arr[100];
+
+	class setMeet
+	{
+	public:
+	    void init();
+	    void solve();
+	private:
+	    int meet_num, arrange_meet_num; //meet_num 会议总数   arrange_meet_num 最多可以安排的回忆数量
+	};
+
+	void setMeet::init()
+	{
+	    int start,end;
+	    cout << "请输入会议的总数" << endl;
+	    cin >> meet_num;
+	    for (int i = 0; i < meet_num; i++) {
+	        cout << "请输入第" << i + 1 << "场会议的开始时间和结束时间，以空格分隔"<< endl;
+	        cin >> start >> end;
+	        meet_arr[i].start = start;
+	        meet_arr[i].end = end;
+	        meet_arr[i].NO = i + 1;
+	    }
+	}
+
+	bool comp(Meet a,Meet b)
+	{
+		//如果结束时间相同，则优先选择开始时间晚的会议。此处可根据具体需求调整
+	    if (a.end == b.end) {
+	        return a.start > b.start;
+	    }
+	    return a.end < b.end;
+	}
+
+	void setMeet::solve()
+	{
+	    sort(meet_arr, meet_arr + meet_num, comp);
+	    cout << "对会议进行排序" << endl;
+	    cout << "会议编号" << " 开始时间" << "  结束时间" << endl;
+	    for (int i = 0; i < meet_num; i ++) {
+	        cout << meet_arr[i].NO << " " << meet_arr[i].start << " " << meet_arr[i].end << endl;
+	    }
+	    
+	    cout << "---选择会议---" << endl;
+	    cout << "选择第1个会议，编号：" << meet_arr[0].NO << " 开始时间：" << meet_arr[0].start << " 结束时间：" << meet_arr[0].end << endl;
+	    arrange_meet_num = 1;
+	    int last = meet_arr[0].end;
+	    
+	    for (int i = 1; i < meet_num; i++) {
+	        if (meet_arr[i].start > last) {
+	            //选择当前会议
+	            arrange_meet_num++;
+	            last = meet_arr[i].end;
+	            cout << "选择第" << i + 1 << "个会议，编号：" << meet_arr[i].NO << " 开始时间：" << meet_arr[i].start << " 结束时间：" << meet_arr[i].end << endl;
+	        }
+	    }
+	    cout << "最多可以安排" << arrange_meet_num << "个会议" << endl;
+	}
+
+	int main()
+	{
+	    setMeet sm;
+	    sm.init();
+	    sm.solve();
+	    return 0;
+	}
+
+#### 运行结果   
+	请输入会议的总数
+	10
+	请输入第1场会议的开始时间和结束时间，以空格分隔
+	9 12
+	请输入第2场会议的开始时间和结束时间，以空格分隔
+	10 11
+	请输入第3场会议的开始时间和结束时间，以空格分隔
+	11 13
+	请输入第4场会议的开始时间和结束时间，以空格分隔
+	13 15
+	请输入第5场会议的开始时间和结束时间，以空格分隔
+	14 16
+	请输入第6场会议的开始时间和结束时间，以空格分隔
+	16 18
+	请输入第7场会议的开始时间和结束时间，以空格分隔
+	15 18
+	请输入第8场会议的开始时间和结束时间，以空格分隔
+	19 21
+	请输入第9场会议的开始时间和结束时间，以空格分隔
+	17 21
+	请输入第10场会议的开始时间和结束时间，以空格分隔
+	20 22
+	对会议进行排序
+	会议编号 开始时间  结束时间
+	2 10 11
+	1 9 12
+	3 11 13
+	4 13 15
+	5 14 16
+	6 16 18
+	7 15 18
+	8 19 21
+	9 17 21
+	10 20 22
+	---选择会议---
+	选择第1个会议，编号：2 开始时间：10 结束时间：11
+	选择第3个会议，编号：3 开始时间：11 结束时间：13
+	选择第4个会议，编号：4 开始时间：13 结束时间：15
+	选择第6个会议，编号：6 开始时间：16 结束时间：18
+	选择第8个会议，编号：8 开始时间：19 结束时间：21
+	最多可以安排5个会议
 
 
+### 哈夫曼编码
+哈夫曼编码(Huffman Coding)，又称霍夫曼编码，是一种编码方式，可变字长编码(VLC)的一种。Huffman于1952年提出一种编码方法，该方法完全依据字符出现概率来构造异字头的平均长度最短的码字，有时称之为最佳编码。哈夫曼编码算法是基于二叉树构建编码压缩结构的，是数据压缩中的一种经典算法，算法根据文本字符出现的频率，重新对字符进行编码。
 
+#### 算法设计   
+> 1. 我们需要一个包含权重、父节点、左节点、右节点、字符信息的数据结构   
+> 2. 使用贪心策略每次从没有没有父节点的节点列表中找出权重最小的俩个节点，权重小的放置于左节点，权重大的放置于右节点   
+> 3. 通过左右节点生成一个新的节点，并将该节点设置为左右节点的父节点   
+> 4. 便利哈夫曼树，得到每个字符对应的编码   
+#### 程序实现   
+	#include <stdio.h>
+	#include <algorithm>
+	#include <cstring>
+	#include <cstdlib>
+	#include <iostream>
+	#include <vector>
 
+	using namespace std;
 
+	#define MAXVALUE 10000
 
+	typedef struct
+	{
+	    double weight;
+	    int parent;
+	    int lchild;
+	    int rchild;
+	    char value;
+	} HNodeType;
+
+	typedef struct
+	{
+	    vector<int> bit;
+	} HCodeType;
+	/**
+	 哈夫曼树
+	 */
+	void HuffmanTree(vector<HNodeType> &node_vector,int n)
+	{
+	    int i, j;   //循环使用
+	    int left, right;    //每次需从数组中找出的俩个节点的数组下标
+	    double left_weight, right_wieght;
+	    for (i = 0 ; i < n; i++) {
+	        cout << "请输入" << i + 1 << "个节点及对应的权重，以空格分隔" << endl;
+	        HNodeType huffNode;
+	        huffNode.weight = 0;
+	        huffNode.parent = -1;
+	        huffNode.lchild = -1;
+	        huffNode.rchild = -1;
+	        
+	        cin >> huffNode.value >> huffNode.weight;
+	        node_vector.push_back(huffNode);
+	    }
+	    //构造哈夫曼树
+	    //i < n-1 循环完毕后，最终剩余的为根节点
+	    for (i = 0; i < n-1; i++) {
+	        left_weight = right_wieght = MAXVALUE;
+	        left = right = -1;
+	        /**
+	         使用贪心策略每次找出还没有父节点的俩个权重最小的节点
+	         将权重略小的节点置于左侧节点，权重略大的节点置于右侧节点
+	         使用当前俩个节点生成一个新的节点，放置于列表的最后，以便下次循环使用
+	         */
+	        for (j = 0; j < node_vector.size(); j++) {
+	            if (node_vector.at(j).weight < left_weight && node_vector.at(j).parent == -1) {
+	                right_wieght = left_weight;
+	                right = left;
+	                left_weight = node_vector.at(j).weight;
+	                left = j;
+	            } else if (node_vector.at(j).weight < right_wieght && node_vector.at(j).parent == -1){
+	                right_wieght = node_vector.at(j).weight;
+	                right = j;
+	            }
+	        }
+	        node_vector.at(left).parent = n + i;
+	        node_vector.at(right).parent = n + i;
+	        
+	        HNodeType huffNode;
+	        huffNode.weight = left_weight + right_wieght;
+	        huffNode.lchild = left;
+	        huffNode.rchild = right;
+	        huffNode.parent = -1;
+	        
+	        node_vector.push_back(huffNode);
+	        cout << "第" << i + 1 << "次循环：" << node_vector.at(left).weight << " " << node_vector.at(right).weight  << endl;
+	    }
+	    
+	    for (i = 0; i < node_vector.size(); i++) {
+	        cout << "parent:" << node_vector.at(i).parent << "    lchild:" <<node_vector.at(i).lchild << " rchild:" << node_vector.at(i).rchild
+	        << "    weight:" << node_vector.at(i).weight  << "    value:" << node_vector.at(i).value << endl;
+	    }
+	}
+	/**
+	 哈夫曼编码转换
+	 */
+	void HuffmanCode(vector<HCodeType> &code_vector,vector<HNodeType> node_vector,int n)
+	{
+	    int i, c, p;
+	    for (i = 0; i < n; i++) {
+	        HCodeType cd;
+	        c = i;
+	        p = node_vector.at(c).parent;
+	        while (p != -1) {
+	            if(node_vector.at(p).lchild == c){
+	                cd.bit.push_back(0);
+	            } else {
+	                cd.bit.push_back(1);
+	            }
+	            c = p;
+	            p = node_vector.at(c).parent;
+	        }
+	        code_vector.push_back(cd);
+	    }
+	}
+	int main()
+	{
+	    int i, j, n;
+	    cout << "请输入节点数量"<< endl;
+	    cin >> n;
+	    
+	    vector<HNodeType> Node_vector;
+	    vector<HCodeType> Code_vector;
+
+	    HuffmanTree(Node_vector, n);
+	    HuffmanCode(Code_vector,Node_vector,n);
+	    
+	    for (i = 0; i < n; i++) {
+	        cout << Node_vector.at(i).value << ": Huffman code is: ";
+	        for (j = Code_vector.at(i).bit.size() - 1; j > -1 ; j--) {
+	            cout << Code_vector.at(i).bit.at(j);
+	        }
+	        cout << endl;
+	    }
+	    return 0;
+	}
+
+#### 运行结果   
+	请输入节点数量
+	6
+	请输入1个节点及对应的权重，以空格分隔
+	a 0.02
+	请输入2个节点及对应的权重，以空格分隔
+	b 0.13
+	请输入3个节点及对应的权重，以空格分隔
+	c 0.2
+	请输入4个节点及对应的权重，以空格分隔
+	d 0.24
+	请输入5个节点及对应的权重，以空格分隔
+	e 0.36
+	请输入6个节点及对应的权重，以空格分隔
+	f 0.05
+	第1次循环：0.02 0.05
+	第2次循环：0.07 0.13
+	第3次循环：0.2 0.2
+	第4次循环：0.24 0.36
+	第5次循环：0.4 0.6
+	parent:6    lchild:-1 rchild:-1    weight:0.02    value:a
+	parent:7    lchild:-1 rchild:-1    weight:0.13    value:b
+	parent:8    lchild:-1 rchild:-1    weight:0.2    value:c
+	parent:9    lchild:-1 rchild:-1    weight:0.24    value:d
+	parent:9    lchild:-1 rchild:-1    weight:0.36    value:e
+	parent:6    lchild:-1 rchild:-1    weight:0.05    value:f
+	parent:7    lchild:0 rchild:5    weight:0.07    value:
+#### 算法分析    
+我们通过信息的使用频率作为权重，构建哈夫曼树，继而通过遍历哈夫曼树的出每个字母的哈夫曼编码。哈夫曼编码是一种无前缀编码，解码时不会混淆，主要应用在数据压缩，加密解密等场合。
 
 
 
