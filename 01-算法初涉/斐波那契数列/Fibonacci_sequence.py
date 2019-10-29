@@ -19,7 +19,7 @@ def Fib_seq1(n):
     if n < 1:
         return -1
     fib_list = [-1] * (n)
-    print(fib_list)
+    # print(fib_list)
     fib_list[0] = 1;
     fib_list[1] = 1;
     for i in range(2,n,1):
@@ -66,9 +66,27 @@ def Fib_seq4(a ,b ,p ,q , count):
         else:
             return Fib_seq4((b*q+a*q+a*p),(b*p+a*q),p,q,(count -1));
 
-num = 34
-print(Fib_seq(num))
-print(Fib_seq1(num))
-print(Fib_seq2(num))
-print(Fib_seq3(1,0,num))
-print(Fib_seq4(1,0,0,1,num))
+num = 12
+# print(Fib_seq(num))
+# print(Fib_seq1(num))
+# print(Fib_seq2(num))
+# print(Fib_seq3(1,0,num))
+# print(Fib_seq4(1,0,0,1,num))
+
+
+def Fib_seq(n):
+    if n < 1:
+        return -1
+    fib_list = [-1] * (n)
+    # print(fib_list)
+    fib_list[0] = 1;
+    fib_list[1] = 1;
+    for i in range(2,n,1):
+        fib_list[i] = fib_list[i - 1] + fib_list[i - 2]
+    print(fib_list)
+    return fib_list;
+
+fib_list = Fib_seq(12)
+for i in range(1,len(fib_list)):
+    print(fib_list[i - 1] ,"比" ,fib_list[i] , ":",(fib_list[i - 1]/fib_list[i]))
+
